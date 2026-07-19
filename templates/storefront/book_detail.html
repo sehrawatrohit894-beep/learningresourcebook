@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }} — Learning Resource Book Publications{% endblock %}
+
+{% block content %}
+<div class="wrap book-detail">
+  <div class="book-cover c-{{ book.category.color }}" {% if book.cover_image %}style="background-image:url('{{ book.cover_image.url }}');background-size:cover;background-position:center;"{% endif %}>
+    {% if book.discount_percent %}<span class="discount-flag">{{ book.discount_percent }}% off</span>{% endif %}
+    {% if not book.cover_image %}
+    <span class="grade-chip">{{ book.grade|default:book.category.name }}</span>
+    <div>
+      <div class="cover-title">{{ book.title }}</div>
+      <div class="cover-author">{{ book.author }}</div>
+    </div>
+    {% endif %}
+  </div>
+
+
+  <div class="detail-info">
+    <span class="eyebrow">{{ book.category.name }}</span>
+    <h1>{{ book.title }}</h1>
+    <p style="color:var(--ink-soft)">by {{ book.author }}</p>
+
+    <div class="detail-meta">
+      <div><strong>{{ book.grade|default:"All levels" }}</strong>Class / grade</div>
+      <div><strong>{{ book.isbn|default:"—" }}</strong>ISBN</div>
+      <div><strong>{{ book.category.name }}</strong>Subject</div>
+    </div>
+
+    <div class="detail-price">
+      <span class="price">&#8377;{{ book.price }}</span>
+      {% if book.mrp and book.mrp > book.price %}
+        <span class="mrp">&#8377;{{ book.mrp }}</span>
+        <span class="save-flag">Save {{ book.discount_percent }}%</span>
+      {% endif %}
+    </div>
+
+    {% if book.in_stock %}
+      <form action="{% url 'cart:cart_add' book.id %}" method="post" class="qty-add-form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ book.get_absolute_url }}">
+        <input type="number" name="quantity" value="1" min="1" max="{{ book.stock }}">
+        <button type="submit" class="btn btn-primary">Add to cart</button>
+      </form>
+      <p class="stock-note">{{ book.stock }} copies in stock</p>
+    {% else %}
+      <p class="stock-note out">Currently out of stock</p>
+    {% endif %}
+
+    <h3 style="margin-top:30px">About this book</h3>
+    <p style="color:var(--ink-soft)">{{ book.description|default:"A curriculum-aligned title crafted with practising teachers to make classroom learning clear, structured and engaging."|linebreaks }}</p>
+  </div>
+</div>
+
+{% if related %}
+<section class="section section-alt related-strip">
+  <div class="wrap">
+    <div class="section-head"><h2>More in {{ book.category.name }}</h2></div>
+    <div class="book-grid">
+      {% for book in related %}
+        {% include "storefront/_book_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

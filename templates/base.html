@@ -1,0 +1,177 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Learning Resource Book Publications{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<div id="page-progress"></div>
+
+<header class="site-header">
+  <div class="header-bar">
+    <div class="wrap header-inner">
+      <a href="{% url 'storefront:home' %}" class="brand">
+        {% load static %}
+<img src="{% static 'images/LR logo-1.png' %}" alt="Learning Resource Book" style="height:38px;width:auto;">
+        <span class="brand-text">Learning<em>Resource</em><small>Book</small></span>
+      </a>
+
+      <nav class="main-nav">
+        <a href="{% url 'storefront:home' %}">Home</a>
+        <a href="{% url 'storefront:catalogue' %}">Catalogue</a>
+        <a href="{% url 'storefront:about' %}">About</a>
+        <a href="{% url 'storefront:contact' %}">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <form class="nav-search" action="{% url 'storefront:catalogue' %}" method="get">
+          <input type="text" name="q" placeholder="Search title, author, class..." value="{{ request.GET.q|default:'' }}">
+          <button type="submit" aria-label="Search">&#128269;</button>
+        </form>
+
+        {% if user.is_authenticated %}
+          <div class="account-menu">
+            <span class="hi-user">Hi, {{ user.first_name|default:user.username }}</span>
+            <a href="{% url 'orders:order_history' %}">Orders</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+          </div>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="account-link">Login</a>
+          <a href="{% url 'accounts:signup' %}" class="btn btn-ghost">Sign up</a>
+        {% endif %}
+
+        <a href="{% url 'cart:cart_detail' %}" class="cart-link">
+          Cart
+          {% if cart_item_count %}<span class="cart-badge">{{ cart_item_count }}</span>{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% if messages %}
+<div class="wrap">
+  {% for message in messages %}
+    <div class="flash flash-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<main>
+{% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div class="footer-col">
+      <span class="brand-text light"><img src="{% static 'images/LR logo-1.png' %}" alt="Learning Resource Book" style="height:38px;width:auto;">Learning<em>Resource</em><small>Book</small></span>
+      <p>Publishing considered textbooks, workbooks and learning aids for pre-primary through senior secondary classrooms across India.</p>
+      <div class="socials">
+        <a href="#">Facebook</a>
+        <a href="#">YouTube</a>
+        <a href="#">Instagram</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Head Office</h4>
+      <p>Learning Resource Book Publications Pvt. Ltd.<br>67 P3 Block New Roshan Pura<br>Najafgarh, New Delhi, 43 Branch Off, Haryana</p>
+      <p>+91 8607000309,8607000306<br>learningresourcebooks@gmail.com</p>
+    </div>
+    <div class="footer-col">
+      <h4>Useful Links</h4>
+      <a href="{% url 'storefront:catalogue' %}">Catalogue</a>
+      <a href="{% url 'storefront:about' %}">About us</a>
+      <a href="{% url 'storefront:vision' %}">Vision &amp; Mission</a>
+      <a href="{% url 'storefront:ebooks' %}">E-books</a>
+      <a href="{% url 'storefront:contact' %}">Contact us</a>
+      <a href="/admin/">Publisher login</a>
+    </div>
+    <div class="footer-col">
+      <h4>Subjects</h4>
+      {% for category in nav_categories %}
+        <a href="{% url 'storefront:catalogue' %}?subject={{ category.slug }}">{{ category.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>&copy; {% now "Y" %} Learning Resource Book Publications. All rights reserved.</span>
+  </div>
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var successFlash = document.querySelector('.flash-success');
+  var cartLink = document.querySelector('.cart-link');
+  if (successFlash && cartLink && successFlash.textContent.includes('added to your cart')) {
+    cartLink.classList.add('bump');
+  }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var nav = document.querySelector('.subject-tabs .wrap');
+  var indicator = document.querySelector('.tab-indicator');
+  if (!nav || !indicator) return;
+  var tabs = nav.querySelectorAll('.subject-tab');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('mouseenter', function () {
+      indicator.style.left = tab.offsetLeft + 'px';
+      indicator.style.width = tab.offsetWidth + 'px';
+      indicator.style.opacity = '1';
+      var color = getComputedStyle(tab).getPropertyValue('--tab-color');
+      indicator.style.background = color || 'var(--marigold)';
+    });
+  });
+  nav.addEventListener('mouseleave', function () {
+    indicator.style.opacity = '0';
+  });
+});
+</script>
+<script>
+(function () {
+  var cards = document.querySelectorAll('.testimonial-carousel .testimonial-card');
+  var dots = document.querySelectorAll('.carousel-dots .dot');
+  if (!cards.length) return;
+  var current = 0, timer;
+  function show(index) {
+    cards.forEach(function (c, i) { c.classList.toggle('active', i === index); });
+    dots.forEach(function (d, i) { d.classList.toggle('active', i === index); });
+    current = index;
+  }
+  dots.forEach(function (dot) {
+    dot.addEventListener('click', function () {
+      show(parseInt(this.getAttribute('data-index'), 10));
+      resetTimer();
+    });
+  });
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(function () { show((current + 1) % cards.length); }, 5000);
+  }
+  resetTimer();
+})();
+</script>
+<script>
+(function () {
+  var bar = document.getElementById('page-progress');
+  function startBar() {
+    bar.style.width = '0%';
+    requestAnimationFrame(function () { bar.style.width = '80%'; });
+  }
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a');
+    if (link && link.href && link.target !== '_blank' && link.origin === window.location.origin && link.href.indexOf('#') === -1) {
+      startBar();
+    }
+  });
+  document.addEventListener('submit', function () { startBar(); });
+  window.addEventListener('pageshow', function () { bar.style.width = '0%'; });
+})();
+</script>
+</body>
+</html>

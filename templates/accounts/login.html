@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Login — BookVerse Publications{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <span class="eyebrow">Welcome back</span>
+    <h1>Login</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.non_field_errors %}<ul class="errorlist">{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      <div class="field">
+        <label for="{{ form.username.id_for_label }}">Username</label>
+        {{ form.username }}
+      </div>
+      <div class="field">
+        <label for="{{ form.password.id_for_label }}">Password</label>
+        {{ form.password }}
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Log in</button>
+    </form>
+    <p class="auth-switch">New to BookVerse? <a href="{% url 'accounts:signup' %}">Create an account</a></p>
+  </div>
+</div>
+{% endblock %}

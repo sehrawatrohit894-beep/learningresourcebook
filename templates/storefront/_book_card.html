@@ -1,0 +1,25 @@
+<a href="{{ book.get_absolute_url }}" class="book-card">
+  <div class="book-cover c-{{ book.category.color }}" {% if book.cover_image %}style="background-image:url('{{ book.cover_image.url }}');background-size:cover;background-position:center;"{% endif %}>
+    {% if book.discount_percent %}<span class="discount-flag">{{ book.discount_percent }}% off</span>{% endif %}
+    {% if not book.cover_image %}
+    <span class="grade-chip">{{ book.grade|default:book.category.name }}</span>
+    <div>
+      <div class="cover-title">{{ book.title }}</div>
+      <div class="cover-author">{{ book.author }}</div>
+    </div>
+    {% endif %}
+  </div>
+  <div class="book-info">
+    <span class="subject-label">{{ book.category.name }}</span>
+    <h3>{{ book.title }}</h3>
+    <div class="price-row">
+      <span class="price">&#8377;{{ book.price }}</span>
+      {% if book.mrp and book.mrp > book.price %}<span class="mrp">&#8377;{{ book.mrp }}</span>{% endif %}
+    </div>
+    {% if book.in_stock %}
+      <span class="stock-note">In stock</span>
+    {% else %}
+      <span class="stock-note out">Out of stock</span>
+    {% endif %}
+  </div>
+</a>

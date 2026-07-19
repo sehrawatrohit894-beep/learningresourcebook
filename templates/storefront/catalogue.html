@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Catalogue — Learning Resource Book Publications{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Browse by subject</span>
+    <h1>Full catalogue</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap catalogue-layout">
+
+    <aside class="filter-panel">
+      <h4>Subjects</h4>
+      <div class="filter-list">
+        <a href="{% url 'storefront:catalogue' %}" class="{% if not current_subject %}active{% endif %}">
+          <span class="dot" style="background:var(--indigo)"></span> All subjects
+        </a>
+        {% for category in categories %}
+          <a href="?subject={{ category.slug }}" class="c-{{ category.color }} {% if current_subject == category.slug %}active{% endif %}">
+            <span class="dot"></span>{{ category.name }}
+          </a>
+        {% endfor %}
+      </div>
+    </aside>
+
+    <div>
+      <div class="sort-bar">
+        <span class="results-count">{{ page_obj.paginator.count }} book{{ page_obj.paginator.count|pluralize }} found{% if query %} for &ldquo;{{ query }}&rdquo;{% endif %}</span>
+        <form method="get">
+          {% if current_subject %}<input type="hidden" name="subject" value="{{ current_subject }}">{% endif %}
+          {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+          <select name="sort" onchange="this.form.submit()">
+            <option value="">Sort: Newest</option>
+            <option value="price_asc" {% if sort == "price_asc" %}selected{% endif %}>Price: Low to High</option>
+            <option value="price_desc" {% if sort == "price_desc" %}selected{% endif %}>Price: High to Low</option>
+            <option value="title" {% if sort == "title" %}selected{% endif %}>Title: A-Z</option>
+          </select>
+        </form>
+      </div>
+
+      {% if page_obj.object_list %}
+        <div class="book-grid">
+          {% for book in page_obj %}
+            {% include "storefront/_book_card.html" %}
+          {% endfor %}
+        </div>
+
+        {% if page_obj.paginator.num_pages > 1 %}
+          <div class="pagination">
+            {% if page_obj.has_previous %}
+              <a href="?page={{ page_obj.previous_page_number }}{% if current_subject %}&subject={{ current_subject }}{% endif %}{% if query %}&q={{ query }}{% endif %}">&larr; Prev</a>
+            {% endif %}
+            <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}{% if current_subject %}&subject={{ current_subject }}{% endif %}{% if query %}&q={{ query }}{% endif %}">Next &rarr;</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="empty-state">
+          <h3>No books match your search</h3>
+          <p>Try a different subject or search term.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

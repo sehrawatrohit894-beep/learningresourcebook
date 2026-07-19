@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}My Orders — BookVerse Publications{% endblock %}
+
+{% block content %}
+<div class="cart-page">
+  <h1>My orders</h1>
+  {% if orders %}
+    {% for order in orders %}
+      <div class="form-card" style="margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div>
+            <strong>Order #{{ order.id }}</strong>
+            <p style="font-size:.82rem;color:var(--ink-soft);margin:4px 0 0">Placed {{ order.created_at|date:"d M Y" }} &middot; {{ order.get_status_display }}</p>
+          </div>
+          <div style="font-family:var(--font-mono);font-weight:600">&#8377;{{ order.total_amount }}</div>
+        </div>
+        <hr style="border:none;border-top:1px solid #eee3cb;margin:14px 0">
+        {% for item in order.items.all %}
+          <div class="line" style="border:none;padding:4px 0"><span>{{ item.book_title }} &times; {{ item.quantity }}</span><span>&#8377;{{ item.total_price }}</span></div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <h3>No orders yet</h3>
+      <a href="{% url 'storefront:catalogue' %}" class="btn btn-primary" style="margin-top:16px">Browse catalogue</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

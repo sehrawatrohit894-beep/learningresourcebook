@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Learning Resource Book Publications — Textbooks & Learning Aids for K-12{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">15 years of classroom-first publishing</span>
+      <h1>Textbooks built for the way <em>India learns.</em></h1>
+      <p class="lede">From pre-primary rhymes to senior-secondary sciences, Learning Resource Book designs curriculum-aligned books, workbooks and digital learning aids trusted by schools nationwide.</p>
+      <div class="hero-ctas">
+        <a href="{% url 'storefront:catalogue' %}" class="btn btn-primary">Browse the catalogue</a>
+        <a href="{% url 'storefront:about' %}" class="btn btn-outline">Our story</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong class="counter" data-target="150" data-suffix="+">0</strong><span>Titles in print</span></div>
+        <div><strong class="counter" data-target="2000" data-suffix="+">0</strong><span>Partner schools</span></div>
+        <div><strong>Pre-K–8</strong><span>Full curriculum span</span></div>
+        </div>
+    </div>
+    <div class="spine-stack">
+  {% if hero_books %}
+    {% for book in hero_books %}
+      <div class="spine spine-{{ forloop.counter }}" style="background-image:url('{{ book.cover_image.url }}');background-size:cover;background-position:center;padding:0;">
+      </div>
+    {% endfor %}
+  {% else %}
+      <div class="spine spine-1"><span class="s-label">REASONING WORKBOOK</span><span class="s-title">REASONING &amp; Beyond</span></div>
+      <div class="spine spine-2"><span class="s-label">I CAN DO IT</span><span class="s-title">Explore &amp; GENERAL KNOWLEDGE</span></div>
+      <div class="spine spine-3"><span class="s-label">I CAN DO IT</span><span class="s-title">GENERAL KNOWLEDGE</span></div>
+      <div class="spine spine-4"><span class="s-label">I CAN DO IT</span><span class="s-title">Learn &amp; GENERAL KNOWLEDGE</span></div>
+  {% endif %}
+    </div>
+  </div>
+</section>
+<nav class="subject-tabs">
+  <div class="wrap">
+    {% for category in categories %}
+      <a href="{% url 'storefront:catalogue' %}?subject={{ category.slug }}" class="subject-tab c-{{ category.color }}">
+        <span class="dot"></span>{{ category.name }}
+      </a>
+    {% endfor %}
+    <span class="tab-indicator"></span>
+  </div>
+</nav>
+
+{% if featured_books %}
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Handpicked for classrooms</span>
+        <h2>Featured books</h2>
+      </div>
+      <a href="{% url 'storefront:catalogue' %}" class="see-all see-all-blink">View full catalogue &rarr;</a>
+    </div>
+    <div class="book-grid">
+      {% for book in featured_books %}
+        {% include "storefront/_book_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">What we do</span>
+        <h2>Our services</h2>
+      </div>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card c-marigold">
+        <h3>Curriculum publishing</h3>
+        <p>Board-aligned textbooks and workbooks written with practising teachers, refreshed every academic cycle.</p>
+      </div>
+      <div class="feature-card c-forest">
+        <h3>Digital learning aids</h3>
+        <p>Companion e-books, printable worksheets and assessment banks that extend every title beyond the page.</p>
+      </div>
+      <div class="feature-card c-terracotta">
+        <h3>School partnerships</h3>
+        <p>Bulk ordering, teacher training and dedicated account support for schools adopting Learning Resource Book titles.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if new_arrivals %}
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">Fresh off the press</span>
+        <h2>New arrivals</h2>
+      </div>
+    </div>
+    <div class="book-grid">
+      {% for book in new_arrivals %}
+        {% include "storefront/_book_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if testimonials %}
+<section class="section section-dark">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">From our schools</span>
+        <h2>What educators say</h2>
+      </div>
+    </div>
+    <div class="testimonial-carousel">
+     <div class="testimonial-track">
+        {% for t in testimonials %}
+         <div class="testimonial-card {% if forloop.first %}active{% endif %}">
+           <span class="quote-mark">&ldquo;</span>
+           <p>{{ t.quote }}</p>
+           <div class="who">{{ t.name }}<small>{{ t.role }}</small></div>
+         </div>
+       {% endfor %}
+      </div>
+      <div class="carousel-dots">
+        {% for t in testimonials %}
+           <button class="dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"></button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+<script>
+document.querySelectorAll('.counter').forEach(function (el) {
+  var target = parseInt(el.getAttribute('data-target'), 10);
+  var suffix = el.getAttribute('data-suffix') || '';
+  var duration = 1500;
+  var startTime = null;
+  function step(timestamp) {
+    if (!startTime) startTime = timestamp;
+    var progress = Math.min((timestamp - startTime) / duration, 1);
+    var value = Math.floor(progress * target);
+    el.textContent = value.toLocaleString('en-IN') + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target.toLocaleString('en-IN') + suffix;
+  }
+  requestAnimationFrame(step);
+});
+</script>
+{% endblock %}

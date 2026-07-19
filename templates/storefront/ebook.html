@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}E-books — Learning Resource Book{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Read online, anytime</span>
+    <h1>E-books</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    {% if ebook_list %}
+      <div class="book-grid">
+        {% for ebook in ebook_list %}
+          <div class="book-card" style="cursor:default">
+            <div class="book-cover c-indigo" {% if ebook.cover_image %}style="background-image:url('{{ ebook.cover_image.url }}');background-size:cover;background-position:center;"{% endif %}>
+              {% if not ebook.cover_image %}
+              <div>
+                <div class="cover-title">{{ ebook.title }}</div>
+                <div class="cover-author">{{ ebook.author }}</div>
+              </div>
+              {% endif %}
+            </div>
+            <div class="book-info">
+              {% if ebook.category %}<span class="subject-label">{{ ebook.category.name }}</span>{% endif %}
+              <h3>{{ ebook.title }}</h3>
+              <a href="{{ ebook.pdf_file.url }}" target="_blank" class="btn btn-primary btn-block" style="margin-top:8px">Download PDF</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h3>No e-books uploaded yet</h3>
+        <p>Check back soon — new titles are added regularly.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

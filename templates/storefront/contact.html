@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Contact Us — Learning Resource Book Publications{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">We'd love to hear from you</span>
+    <h1>Contact us</h1>
+  </div>
+</section>
+
+<div class="contact-layout">
+  <div class="contact-info">
+    <div>
+      <h4>Head office</h4>
+      <p>Learning Resource Book Publications Pvt. Ltd.<br>67 P3 Block, New Roshan Pura <br> Najafgarh, New Delhi-43/Branch off: Haryana</p>
+    </div>
+    <div>
+      <h4>Phone</h4>
+      <p>+91 8607000306 (Sales)<br>+91 8607000309 (Schools desk)</p>
+    </div>
+    <div>
+      <h4>Email</h4>
+      <p>learningresourcebook@gmail.com<br>
+    </div>
+  </div>
+
+  <form method="post" class="form-card">
+    {% csrf_token %}
+    <div class="field">
+      <label for="{{ form.name.id_for_label }}">Name</label>
+      {{ form.name }}
+    </div>
+    <div class="field">
+      <label for="{{ form.email.id_for_label }}">Email</label>
+      {{ form.email }}
+    </div>
+    <div class="field">
+      <label for="{{ form.subject.id_for_label }}">Subject</label>
+      {{ form.subject }}
+    </div>
+    <div class="field">
+      <label for="{{ form.message.id_for_label }}">Message</label>
+      {{ form.message }}
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Send message</button>
+  </form>
+</div>
+{% endblock %}
